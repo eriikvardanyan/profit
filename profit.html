@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1972/1972429.png" type="image/png">
+    <title>Profit Quiz</title>
+    <style>
+        :root {
+            --win-accent: #0078d4;
+            --win-success: #28a745;
+            --win-error: #c42b1c;
+            --glass: rgba(255, 255, 255, 0.85);
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI Variable', sans-serif;
+            background: linear-gradient(180deg, #0b3d4d 0%, #1e5e71 40%, #4da1b3 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .data-table-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0,0,0,0.1);
+            width: 95%;
+            max-width: 900px;
+            overflow-x: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: center;
+            background: white;
+        }
+
+        td {
+            border: 1px solid #ddd;
+            padding: 4px;
+        }
+
+        .highlight-cell {
+            background-color: #d1d1d1 !important;
+        }
+
+        .row-header { background: #f8f9fa; font-weight: bold; }
+        .val-top { border-bottom: none; font-weight: 600; color: #333; }
+        .val-bottom { border-top: none; color: #666; background: #fafafa; }
+        
+        .highlight-cell.val-bottom { background-color: #d1d1d1 !important; }
+
+        .window {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 850px;
+            min-height: 400px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        #setup-screen { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .modes-container { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .itc-select { position: relative; width: 240px; }
+        .itc-select__toggle {
+            width: 100%; padding: 15px; background: #fff; border: 2px solid #ddd;
+            border-radius: 8px; text-align: left; cursor: pointer; font-weight: 600;
+            display: flex; justify-content: space-between; align-items: center; font-size: 16px;
+        }
+        .itc-select.selected-mode .itc-select__toggle {
+            border-color: var(--win-accent); box-shadow: 0 0 10px rgba(0, 120, 212, 0.3); background: #f0f7ff;
+        }
+        .itc-select__dropdown {
+            position: absolute; top: calc(100% + 5px); left: 0; right: 0;
+            background: #fff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: none; z-index: 100; max-height: 250px; overflow-y: auto;
+        }
+        .itc-select__option { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+        .itc-select__option:hover { background: #f8f9fa; }
+
+        .btn-play, .btn-restart {
+            margin-top: 20px; padding: 18px 60px; font-size: 24px; font-weight: 800;
+            border: none; border-radius: 15px; color: #fff; cursor: pointer; width: 100%; max-width: 300px;
+        }
+        .btn-play { background: linear-gradient(135deg, #0078d4, #005a9e); box-shadow: 0 8px 15px rgba(0, 120, 212, 0.4); }
+        .btn-restart { background: linear-gradient(135deg, #28a745, #1e7e34); }
+
+        #game-screen { display: none; flex-direction: column; gap: 20px; height: 100%; }
+        .main-game { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .target-number {
+            font-size: 72px; font-weight: 900; color: var(--win-accent);
+            background: #fff; padding: 20px 40px; border-radius: 20px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05); min-width: 200px; text-align: center;
+        }
+        .input-group { display: flex; gap: 10px; width: 100%; justify-content: center; }
+        input[type="text"] {
+            width: 150px; padding: 15px; border: 3px solid #eee; border-radius: 12px;
+            font-size: 28px; text-align: center; outline: none;
+        }
+        .btn-check {
+            background: var(--win-accent); color: #fff; border: none;
+            padding: 0 25px; font-size: 18px; font-weight: 600; border-radius: 12px; cursor: pointer;
+        }
+        .history {
+            background: rgba(255,255,255,0.4); padding: 15px; border-radius: 12px;
+            height: 150px; overflow-y: auto; border: 1px solid rgba(0,0,0,0.05); margin-top: auto;
+        }
+        .history h3 { margin: 0 0 10px 0; font-size: 14px; color: #555; text-align: center; text-transform: uppercase; }
+        .history-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .history-item {
+            background: #fff; padding: 5px 12px; border-radius: 20px;
+            font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .target-number { font-size: 56px; }
+            .input-group { flex-direction: column; align-items: center; }
+            input[type="text"], .btn-check { width: 100%; max-width: 250px; }
+            .btn-check { height: 55px; }
+        }
+
+        .show { display: block !important; }
+        .flex-show { display: flex !important; }
+        .hidden { display: none !important; }
+        input.correct { border-color: var(--win-success) !important; background: #eaffef; }
+        input.wrong { border-color: var(--win-error) !important; background: #fff1f0; }
+    </style>
+</head>
+<body>
+
+<div class="data-table-container" id="profit-table">
+    <table id="html-data-table"></table>
+</div>
+
+<div class="window">
+    <div id="setup-screen">
+        <h1 style="margin-bottom: 20px; color: #333; text-align: center; font-size: 24px;">Ընտրեք ռեժիմը</h1>
+        <div class="modes-container">
+            <div class="itc-select" id="mode-5">
+                <button class="itc-select__toggle" onclick="toggleDropdown('opt-5')">Ըստ 5 հատի</button>
+                <div class="itc-select__dropdown" id="opt-5"></div>
+            </div>
+            <div class="itc-select" id="mode-row">
+                <button class="itc-select__toggle" onclick="toggleDropdown('opt-row')">Ըստ տողերի</button>
+                <div class="itc-select__dropdown" id="opt-row"></div>
+            </div>
+            <div class="itc-select" id="mode-all">
+                <button class="itc-select__toggle" onclick="selectRange(0, 85, 'Ամբողջը', 'mode-all')">Ամբողջը</button>
+            </div>
+        </div>
+        <button class="btn-play" onclick="initGame()">Խաղալ</button>
+    </div>
+
+    <div id="game-screen">
+        <div class="main-game">
+            <div id="target-display" class="target-number">---</div>
+            <div class="input-group" id="controls">
+                <input type="text" id="user-input" inputmode="decimal" placeholder="0.00" autocomplete="off">
+                <button class="btn-check" id="main-btn" onclick="checkAnswer()">Ստուգել</button>
+            </div>
+        </div>
+        <div class="history">
+            <h3>Գուշակվածներ</h3>
+            <div id="history-list" class="history-list"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const data = [
+        [1.01, 11], [1.02, 9.9], [1.03, 9.05], [1.04, 8.35], [1.05, 7.77], [1.06, 7.25], [1.07, 6.8], [1.08, 6.45], [1.09, 6.1], [1.1, 5.8], [1.11, 5.55], [1.12, 5.3], [1.13, 5.1], [1.14, 4.9], [1.15, 4.7], [1.16, 4.55], [1.17, 4.4], [1.18, 4.2], [1.19, 4.15], [1.2, 4],
+        [1.21, 3.9], [1.22, 3.8], [1.23, 3.7], [1.24, 3.6], [1.25, 3.55], [1.26, 3.45], [1.27, 3.4], [1.28, 3.35], [1.29, 3.25], [1.3, 3.2], [1.31, 3.15], [1.32, 3.1], [1.33, 3], [1.34, 2.95], [1.35, 2.9], [1.36, 2.89], [1.37, 2.85], [1.38, 2.8], [1.39, 2.75], [1.4, 2.7],
+        [1.41, 2.69], [1.42, 2.65], [1.43, 2.6], [1.44, 2.59], [1.45, 2.55], [1.46, 2.52], [1.47, 2.5], [1.48, 2.45], [1.49, 2.44], [1.5, 2.4], [1.51, 2.39], [1.52, 2.35], [1.53, 2.34], [1.54, 2.32], [1.55, 2.3], [1.56, 2.27], [1.57, 2.25], [1.58, 2.23], [1.59, 2.21], [1.6, 2.2],
+        [1.61, 2.17], [1.62, 2.15], [1.63, 2.14], [1.64, 2.12], [1.65, 2.1], [1.66, 2.09], [1.67, 2.07], [1.68, 2.05], [1.69, 2.04], [1.7, 2], [1.71, 1.99], [1.72, 1.98], [1.73, 1.97], [1.74, 1.96], [1.75, 1.95], [1.76, 1.94], [1.77, 1.93], [1.78, 1.92], [1.79, 1.91], [1.8, 1.9],
+        [1.81, 1.89], [1.82, 1.88], [1.83, 1.87], [1.84, 1.86], [1.85, 1.85]
+    ];
+
+    function isHighlighted(index) {
+        const stepIndex = (index + 1);
+        return stepIndex % 5 === 0;
+    }
+
+    function generateTable() {
+        const table = document.getElementById('html-data-table');
+        let html = '';
+        for (let i = 0; i < data.length; i += 20) {
+            let chunk = data.slice(i, i + 20);
+            html += '<tr>';
+            chunk.forEach((d, idx) => {
+                const globalIdx = i + idx;
+                const highlightClass = isHighlighted(globalIdx) ? 'highlight-cell' : '';
+                html += `<td class="val-top ${highlightClass}">${d[0]}</td>`;
+            });
+            html += '</tr><tr>';
+            chunk.forEach((d, idx) => {
+                const globalIdx = i + idx;
+                const highlightClass = isHighlighted(globalIdx) ? 'highlight-cell' : '';
+                html += `<td class="val-bottom ${highlightClass}">${d[1]}</td>`;
+            });
+            html += '</tr><tr style="height:10px"><td colspan="20" style="border:none"></td></tr>';
+        }
+        table.innerHTML = html;
+    }
+    generateTable();
+
+    let originalPool = [];
+    let activePool = [];
+    let currentPair = null;
+
+    function fillOptions() {
+        const opt5 = document.getElementById('opt-5');
+        let counter5 = 1;
+        for(let i=0; i<85; i+=5) {
+            let endIdx = Math.min(i + 5, 85);
+            const label = `${data[i][0]} - ${data[endIdx-1][0]}`;
+            opt5.innerHTML += `<div class="itc-select__option" onclick="selectRange(${i}, ${endIdx}, '${label}', 'mode-5')">${counter5}) ${label}</div>`;
+            counter5++;
+        }
+        
+        const optRow = document.getElementById('opt-row');
+        const rowLabels = ['1.01 - 1.2', '1.21 - 1.4', '1.41 - 1.6', '1.61 - 1.85'];
+        const rowRanges = [[0,20], [20,40], [40,60], [60,85]];
+        rowLabels.forEach((l, idx) => {
+            optRow.innerHTML += `<div class="itc-select__option" onclick="selectRange(${rowRanges[idx][0]}, ${rowRanges[idx][1]}, '${l}', 'mode-row')">${idx + 1}) ${l}</div>`;
+        });
+    }
+    fillOptions();
+
+    function toggleDropdown(id) {
+        const drop = document.getElementById(id);
+        const isOpen = drop.classList.contains('show');
+        document.querySelectorAll('.itc-select__dropdown').forEach(d => d.classList.remove('show'));
+        if (!isOpen) drop.classList.add('show');
+    }
+
+    function selectRange(start, end, label, parentId) {
+        originalPool = data.slice(start, end);
+        document.querySelectorAll('.itc-select').forEach(s => s.classList.remove('selected-mode'));
+        document.getElementById(parentId).classList.add('selected-mode');
+        document.querySelector(`#${parentId} .itc-select__toggle`).innerText = label;
+    }
+
+    function initGame() {
+        if (originalPool.length === 0) {
+            alert("Խնդրում ենք ընտրել ռեժիմը!");
+            return;
+        }
+        document.getElementById('profit-table').classList.add('hidden');
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.add('flex-show');
+        activePool = [...originalPool];
+        document.getElementById('history-list').innerHTML = '';
+        nextRound();
+    }
+
+    function nextRound() {
+        if (activePool.length === 0) {
+            endGame();
+            return;
+        }
+        const randomIndex = Math.floor(Math.random() * activePool.length);
+        currentPair = activePool.splice(randomIndex, 1)[0];
+        const showTop = Math.random() > 0.5;
+        const displayVal = showTop ? currentPair[0] : currentPair[1];
+        const targetVal = showTop ? currentPair[1] : currentPair[0];
+        const display = document.getElementById('target-display');
+        display.innerText = displayVal;
+        display.dataset.answer = targetVal;
+        const input = document.getElementById('user-input');
+        input.value = '';
+        input.className = '';
+        input.style.display = 'block';
+        input.focus();
+        const btn = document.getElementById('main-btn');
+        btn.innerText = 'Ստուգել';
+        btn.onclick = checkAnswer;
+        btn.className = 'btn-check';
+    }
+
+    function checkAnswer() {
+        const input = document.getElementById('user-input');
+        const display = document.getElementById('target-display');
+        const userAnswer = input.value.trim().replace(',', '.');
+        const correctAnswer = String(display.dataset.answer);
+        if (userAnswer === correctAnswer) {
+            input.classList.add('correct');
+            addToHistory(display.innerText, correctAnswer);
+            setTimeout(nextRound, 600);
+        } else {
+            input.classList.add('wrong');
+            setTimeout(() => input.classList.remove('wrong'), 600);
+        }
+    }
+
+    function endGame() {
+        document.getElementById('target-display').innerText = "ՎԵՐՋ";
+        document.getElementById('user-input').style.display = 'none';
+        const btn = document.getElementById('main-btn');
+        btn.innerText = 'Կրկնել';
+        btn.className = 'btn-restart';
+        btn.onclick = () => location.reload();
+    }
+
+    function addToHistory(q, a) {
+        const list = document.getElementById('history-list');
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerText = `${q} → ${a}`;
+        list.prepend(div);
+    }
+
+    document.getElementById('user-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkAnswer();
+    });
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.itc-select__toggle')) {
+            document.querySelectorAll('.itc-select__dropdown').forEach(d => d.classList.remove('show'));
+        }
+    }
+</script>
+
+</body>
+</html>
