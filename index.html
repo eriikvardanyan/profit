@@ -25,6 +25,17 @@
             justify-content: center;
             align-items: center;
             padding: 10px;
+            overflow-x: hidden;
+        }
+
+        #magicCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
         }
 
         .data-table-container {
@@ -57,10 +68,8 @@
             background-color: #d1d1d1 !important;
         }
 
-        .row-header { background: #f8f9fa; font-weight: bold; }
         .val-top { border-bottom: none; font-weight: 600; color: #333; }
         .val-bottom { border-top: none; color: #666; background: #fafafa; }
-        
         .highlight-cell.val-bottom { background-color: #d1d1d1 !important; }
 
         .window {
@@ -77,6 +86,7 @@
             flex-direction: column;
             box-sizing: border-box;
             position: relative;
+            z-index: 10;
         }
 
         #setup-screen { display: flex; flex-direction: column; align-items: center; gap: 20px; }
@@ -148,6 +158,8 @@
 </head>
 <body>
 
+<canvas id="magicCanvas"></canvas>
+
 <div class="data-table-container" id="profit-table">
     <table id="html-data-table"></table>
 </div>
@@ -195,9 +207,65 @@
         [1.81, 1.89], [1.82, 1.88], [1.83, 1.87], [1.84, 1.86], [1.85, 1.85]
     ];
 
+    // FIREWORKS ENGINE
+    const canvas = document.getElementById("magicCanvas");
+    const ctx = canvas.getContext("2d");
+    let width, height;
+    let particles = [];
+
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    class Particle {
+        constructor(x, y, vx, vy, size, color, life) {
+            this.x = x; this.y = y; this.vx = vx; this.vy = vy;
+            this.size = size; this.color = color; this.life = life;
+            this.opacity = 1;
+        }
+        update() {
+            this.x += this.vx; this.y += this.vy;
+            this.life--; this.opacity = this.life / 100;
+        }
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
+            ctx.fill();
+        }
+    }
+
+    function createExplosion(x, y) {
+        for (let i = 0; i < 80; i++) {
+            const angle = Math.random() * 2 * Math.PI;
+            const speed = Math.random() * 4 + 1;
+            const color = `255, ${Math.floor(Math.random() * 155 + 100)}, ${Math.floor(Math.random() * 200 + 55)}`;
+            particles.push(new Particle(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed, Math.random() * 4 + 1, color, 100));
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => { p.update(); p.draw(ctx); });
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    function startAutoFireworks() {
+        const duration = 5000;
+        const interval = setInterval(() => {
+            createExplosion(Math.random() * width, Math.random() * height * 0.7);
+        }, 500);
+        setTimeout(() => clearInterval(interval), duration);
+    }
+
+    // GAME ENGINE
     function isHighlighted(index) {
-        const stepIndex = (index + 1);
-        return stepIndex % 5 === 0;
+        return (index + 1) % 5 === 0;
     }
 
     function generateTable() {
@@ -223,9 +291,7 @@
     }
     generateTable();
 
-    let originalPool = [];
-    let activePool = [];
-    let currentPair = null;
+    let originalPool = [], activePool = [], currentPair = null;
 
     function fillOptions() {
         const opt5 = document.getElementById('opt-5');
@@ -236,7 +302,6 @@
             opt5.innerHTML += `<div class="itc-select__option" onclick="selectRange(${i}, ${endIdx}, '${label}', 'mode-5')">${counter5}) ${label}</div>`;
             counter5++;
         }
-        
         const optRow = document.getElementById('opt-row');
         const rowLabels = ['1.01 - 1.2', '1.21 - 1.4', '1.41 - 1.6', '1.61 - 1.85'];
         const rowRanges = [[0,20], [20,40], [40,60], [60,85]];
@@ -261,10 +326,7 @@
     }
 
     function initGame() {
-        if (originalPool.length === 0) {
-            alert("Խնդրում ենք ընտրել ռեժիմը!");
-            return;
-        }
+        if (originalPool.length === 0) return alert("Խնդրում ենք ընտրել ռեժիմը!");
         document.getElementById('profit-table').classList.add('hidden');
         document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.add('flex-show');
@@ -273,11 +335,15 @@
         nextRound();
     }
 
+    function restartCurrentMode() {
+        activePool = [...originalPool];
+        document.getElementById('history-list').innerHTML = '';
+        document.getElementById('user-input').style.display = 'block';
+        nextRound();
+    }
+
     function nextRound() {
-        if (activePool.length === 0) {
-            endGame();
-            return;
-        }
+        if (activePool.length === 0) return endGame();
         const randomIndex = Math.floor(Math.random() * activePool.length);
         currentPair = activePool.splice(randomIndex, 1)[0];
         const showTop = Math.random() > 0.5;
@@ -287,14 +353,9 @@
         display.innerText = displayVal;
         display.dataset.answer = targetVal;
         const input = document.getElementById('user-input');
-        input.value = '';
-        input.className = '';
-        input.style.display = 'block';
-        input.focus();
+        input.value = ''; input.className = ''; input.focus();
         const btn = document.getElementById('main-btn');
-        btn.innerText = 'Ստուգել';
-        btn.onclick = checkAnswer;
-        btn.className = 'btn-check';
+        btn.innerText = 'Ստուգել'; btn.onclick = checkAnswer; btn.className = 'btn-check';
     }
 
     function checkAnswer() {
@@ -316,9 +377,9 @@
         document.getElementById('target-display').innerText = "ՎԵՐՋ";
         document.getElementById('user-input').style.display = 'none';
         const btn = document.getElementById('main-btn');
-        btn.innerText = 'Կրկնել';
-        btn.className = 'btn-restart';
-        btn.onclick = () => location.reload();
+        btn.innerText = 'Կրկնել'; btn.className = 'btn-restart';
+        btn.onclick = restartCurrentMode;
+        startAutoFireworks();
     }
 
     function addToHistory(q, a) {
@@ -333,12 +394,11 @@
         if (e.key === 'Enter') checkAnswer();
     });
 
-    window.onclick = function(event) {
-        if (!event.target.matches('.itc-select__toggle')) {
+    window.onclick = (e) => {
+        if (!e.target.matches('.itc-select__toggle')) {
             document.querySelectorAll('.itc-select__dropdown').forEach(d => d.classList.remove('show'));
         }
     }
 </script>
-
 </body>
 </html>
