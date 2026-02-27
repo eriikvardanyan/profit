@@ -4,198 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1972/1972429.png" type="image/png">
-    <title>Profit Quiz</title>
+    <title>7.5% Profit Quiz</title>
     <style>
         :root {
-            --win-accent: #0078d4;
-            --win-success: #28a745;
-            --win-error: #c42b1c;
+            --win-accent: #007aff;
+            --win-success: #34c759;
+            --win-error: #ff3b30;
             --glass: rgba(255, 255, 255, 0.85);
-            --radius: 12px;
+            --radius: 18px;
         }
 
         body {
-            font-family: 'Segoe UI Variable', sans-serif;
-            background: linear-gradient(180deg, #0b3d4d 0%, #1e5e71 40%, #4da1b3 100%);
-            background-attachment: fixed;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: url('./beck-stars.jpg') no-repeat center center fixed;
+            background-size: cover;
             min-height: 100vh;
             margin: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 10px;
-            overflow-x: hidden;
+            padding: 20px 10px;
         }
 
         #magicCanvas {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999;
+        }
+
+        .site-title {
+            color: white;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .window {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: var(--radius);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
             width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .window-header {
+            background: rgba(255,255,255,0.5);
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .mac-dots { display: flex; gap: 8px; }
+        .dot { width: 11px; height: 11px; border-radius: 50%; }
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .game-info { display: flex; gap: 15px; align-items: center; }
+        .hearts { color: #ff3b30; font-size: 16px; }
+        .game-count { background: rgba(0,0,0,0.08); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+
+        .content { padding: 20px; }
+
+        .itc-select {
+            border: 2px solid transparent;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+        
+        .itc-select.selected-mode {
+            border-color: var(--win-accent);
+            box-shadow: 0 0 10px rgba(0, 122, 255, 0.3);
+        }
+
+        .itc-select__toggle {
+            width: 100%; padding: 10px 15px; 
+            background: #fff; color: #000;
+            border: 1px solid #ddd; border-radius: 10px; 
+            cursor: pointer; font-weight: 500; font-size: 14px;
+            display: flex; justify-content: flex-start; align-items: center;
+        }
+
+        .mode-num {
+            background: #eee;
+            width: 22px; height: 22px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; margin-right: 12px; font-size: 11px; font-weight: 700;
+        }
+
+        .btn-play-container { display: flex; justify-content: center; width: 100%; }
+        .btn-play, .btn-restart {
+            background: #000; color: white; border: none; border-radius: 8px;
+            padding: 8px 25px; font-size: 14px; font-weight: 600;
+            cursor: pointer; margin-top: 15px; width: auto;
         }
 
         .data-table-container {
             background: var(--glass);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(0,0,0,0.1);
-            width: 95%;
-            max-width: 900px;
-            overflow-x: auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(15px);
+            padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.3);
+            width: 95%; max-width: 900px; overflow-x: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            text-align: center;
-            background: white;
+            width: 100%; border-collapse: separate; border-spacing: 2px;
+            font-size: 10px; text-align: center; background: rgba(255,255,255,0.4);
         }
 
-        td {
-            border: 1px solid #ddd;
-            padding: 4px;
-        }
+        td { padding: 3px; border-radius: 2px; }
+        .val-top { font-weight: 700; color: #000; background: rgba(255,255,255,0.6); }
+        .val-bottom { color: #333; background: rgba(240,240,240,0.5); }
+        
+        .highlight-cell { background-color: #8f8f8e !important; color: #000000 !important; }
 
-        .highlight-cell {
-            background-color: #d1d1d1 !important;
-        }
-
-        .val-top { border-bottom: none; font-weight: 600; color: #333; }
-        .val-bottom { border-top: none; color: #666; background: #fafafa; }
-        .highlight-cell.val-bottom { background-color: #d1d1d1 !important; }
-
-        .window {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 850px;
-            min-height: 400px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-            position: relative;
-            z-index: 10;
-        }
-
-        #setup-screen { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        .modes-container { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; }
-        .itc-select { position: relative; width: 240px; }
-        .itc-select__toggle {
-            width: 100%; padding: 15px; background: #fff; border: 2px solid #ddd;
-            border-radius: 8px; text-align: left; cursor: pointer; font-weight: 600;
-            display: flex; justify-content: space-between; align-items: center; font-size: 16px;
-        }
-        .itc-select.selected-mode .itc-select__toggle {
-            border-color: var(--win-accent); box-shadow: 0 0 10px rgba(0, 120, 212, 0.3); background: #f0f7ff;
-        }
-        .itc-select__dropdown {
-            position: absolute; top: calc(100% + 5px); left: 0; right: 0;
-            background: #fff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            display: none; z-index: 100; max-height: 250px; overflow-y: auto;
-        }
-        .itc-select__option { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
-        .itc-select__option:hover { background: #f8f9fa; }
-
-        .btn-play, .btn-restart {
-            margin-top: 20px; padding: 18px 60px; font-size: 24px; font-weight: 800;
-            border: none; border-radius: 15px; color: #fff; cursor: pointer; width: 100%; max-width: 300px;
-        }
-        .btn-play { background: linear-gradient(135deg, #0078d4, #005a9e); box-shadow: 0 8px 15px rgba(0, 120, 212, 0.4); }
-        .btn-restart { background: linear-gradient(135deg, #28a745, #1e7e34); }
-
-        #game-screen { display: none; flex-direction: column; gap: 20px; height: 100%; }
-        .main-game { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        .target-number {
-            font-size: 72px; font-weight: 900; color: var(--win-accent);
-            background: #fff; padding: 20px 40px; border-radius: 20px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05); min-width: 200px; text-align: center;
-        }
-        .input-group { display: flex; gap: 10px; width: 100%; justify-content: center; }
+        #game-screen { display: none; flex-direction: column; align-items: center; gap: 15px; }
+        .target-number { font-size: 60px; font-weight: 800; color: #1d1d1f; }
         input[type="text"] {
-            width: 150px; padding: 15px; border: 3px solid #eee; border-radius: 12px;
-            font-size: 28px; text-align: center; outline: none;
+            width: 120px; padding: 12px; border: 2px solid #ddd; border-radius: 12px;
+            font-size: 24px; text-align: center; outline: none;
         }
-        .btn-check {
-            background: var(--win-accent); color: #fff; border: none;
-            padding: 0 25px; font-size: 18px; font-weight: 600; border-radius: 12px; cursor: pointer;
-        }
-        .history {
-            background: rgba(255,255,255,0.4); padding: 15px; border-radius: 12px;
-            height: 150px; overflow-y: auto; border: 1px solid rgba(0,0,0,0.05); margin-top: auto;
-        }
-        .history h3 { margin: 0 0 10px 0; font-size: 14px; color: #555; text-align: center; text-transform: uppercase; }
-        .history-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-        .history-item {
-            background: #fff; padding: 5px 12px; border-radius: 20px;
-            font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #eee;
-        }
+        .btn-check { background: #000; color: white; border: none; padding: 0 20px; border-radius: 12px; cursor: pointer; }
 
-        @media (max-width: 768px) {
-            .target-number { font-size: 56px; }
-            .input-group { flex-direction: column; align-items: center; }
-            input[type="text"], .btn-check { width: 100%; max-width: 250px; }
-            .btn-check { height: 55px; }
-        }
+        .history { width: 100%; height: 80px; overflow-y: auto; margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.05); }
+        .history-list { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; padding-top: 10px; }
+        .history-item { background: rgba(0,0,0,0.05); padding: 3px 8px; border-radius: 5px; font-size: 11px; }
 
-        .show { display: block !important; }
-        .flex-show { display: flex !important; }
         .hidden { display: none !important; }
-        input.correct { border-color: var(--win-success) !important; background: #eaffef; }
-        input.wrong { border-color: var(--win-error) !important; background: #fff1f0; }
+        input.correct { border-color: var(--win-success); background: #eaffef; }
+        input.wrong { border-color: var(--win-error); animation: shake 0.3s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
     </style>
 </head>
 <body>
 
 <canvas id="magicCanvas"></canvas>
 
-<div class="data-table-container" id="profit-table">
-    <table id="html-data-table"></table>
-</div>
+<div class="site-title">7.5% Profit</div>
 
 <div class="window">
-    <div id="setup-screen">
-        <h1 style="margin-bottom: 20px; color: #333; text-align: center; font-size: 24px;">Ընտրեք ռեժիմը</h1>
-        <div class="modes-container">
-            <div class="itc-select" id="mode-5">
-                <button class="itc-select__toggle" onclick="toggleDropdown('opt-5')">Ըստ 5 հատի</button>
-                <div class="itc-select__dropdown" id="opt-5"></div>
-            </div>
-            <div class="itc-select" id="mode-row">
-                <button class="itc-select__toggle" onclick="toggleDropdown('opt-row')">Ըստ տողերի</button>
-                <div class="itc-select__dropdown" id="opt-row"></div>
-            </div>
-            <div class="itc-select" id="mode-all">
-                <button class="itc-select__toggle" onclick="selectRange(0, 85, 'Ամբողջը', 'mode-all')">Ամբողջը</button>
-            </div>
+    <div class="window-header">
+        <div class="mac-dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
         </div>
-        <button class="btn-play" onclick="initGame()">Խաղալ</button>
+        <div class="game-info hidden" id="game-status">
+            <div class="game-count" id="count-display">Խաղ: 1</div>
+            <div class="hearts" id="hearts-display">❤️❤️❤️</div>
+        </div>
     </div>
 
-    <div id="game-screen">
-        <div class="main-game">
+    <div class="content">
+        <div id="setup-screen">
+            <h3 style="text-align:center; margin:0 0 15px 0;">Ընտրեք ռեժիմը</h3>
+            <div class="modes-container" id="modes-list">
+                <div class="itc-select" id="mode-5">
+                    <button class="itc-select__toggle" onclick="toggleDropdown('opt-5')">
+                        <span class="mode-num">1</span> <span id="label-5">Ըստ 5 հատի</span>
+                    </button>
+                    <div class="itc-select__dropdown hidden" id="opt-5" style="background:white; border-radius:10px; padding:5px; margin-top:5px; max-height:150px; overflow-y:auto; color:black; font-size:13px; border: 1px solid #eee;"></div>
+                </div>
+                <div class="itc-select" id="mode-row">
+                    <button class="itc-select__toggle" onclick="toggleDropdown('opt-row')">
+                        <span class="mode-num">2</span> <span id="label-row">Ըստ տողերի</span>
+                    </button>
+                    <div class="itc-select__dropdown hidden" id="opt-row" style="background:white; border-radius:10px; padding:5px; margin-top:5px; color:black; font-size:13px; border: 1px solid #eee;"></div>
+                </div>
+                <div class="itc-select" id="mode-all">
+                    <button class="itc-select__toggle" onclick="selectRange(0, 85, 'Ամբողջը', 'mode-all')">
+                        <span class="mode-num">3</span> Ամբողջը
+                    </button>
+                </div>
+            </div>
+            <div class="btn-play-container">
+                <button class="btn-play" onclick="initGame()">Խաղալ</button>
+            </div>
+        </div>
+
+        <div id="game-screen">
             <div id="target-display" class="target-number">---</div>
-            <div class="input-group" id="controls">
+            <div class="input-group" style="display:flex; gap:10px;">
                 <input type="text" id="user-input" inputmode="decimal" placeholder="0.00" autocomplete="off">
                 <button class="btn-check" id="main-btn" onclick="checkAnswer()">Ստուգել</button>
             </div>
-        </div>
-        <div class="history">
-            <h3>Գուշակվածներ</h3>
-            <div id="history-list" class="history-list"></div>
+            <div class="history">
+                <div id="history-list" class="history-list"></div>
+            </div>
         </div>
     </div>
+</div>
+
+<div class="data-table-container" id="profit-table">
+    <table id="html-data-table"></table>
 </div>
 
 <script>
@@ -207,143 +219,83 @@
         [1.81, 1.89], [1.82, 1.88], [1.83, 1.87], [1.84, 1.86], [1.85, 1.85]
     ];
 
-    // FIREWORKS ENGINE
-    const canvas = document.getElementById("magicCanvas");
-    const ctx = canvas.getContext("2d");
-    let width, height;
-    let particles = [];
-
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    class Particle {
-        constructor(x, y, vx, vy, size, color, life) {
-            this.x = x; this.y = y; this.vx = vx; this.vy = vy;
-            this.size = size; this.color = color; this.life = life;
-            this.opacity = 1;
-        }
-        update() {
-            this.x += this.vx; this.y += this.vy;
-            this.life--; this.opacity = this.life / 100;
-        }
-        draw(ctx) {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
-            ctx.fill();
-        }
-    }
-
-    function createExplosion(x, y) {
-        for (let i = 0; i < 80; i++) {
-            const angle = Math.random() * 2 * Math.PI;
-            const speed = Math.random() * 4 + 1;
-            const color = `255, ${Math.floor(Math.random() * 155 + 100)}, ${Math.floor(Math.random() * 200 + 55)}`;
-            particles.push(new Particle(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed, Math.random() * 4 + 1, color, 100));
-        }
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, width, height);
-        particles = particles.filter(p => p.life > 0);
-        particles.forEach(p => { p.update(); p.draw(ctx); });
-        requestAnimationFrame(animate);
-    }
-    animate();
-
-    function startAutoFireworks() {
-        const duration = 5000;
-        const interval = setInterval(() => {
-            createExplosion(Math.random() * width, Math.random() * height * 0.7);
-        }, 500);
-        setTimeout(() => clearInterval(interval), duration);
-    }
-
-    // GAME ENGINE
-    function isHighlighted(index) {
-        return (index + 1) % 5 === 0;
-    }
+    let lives = 3;
+    let gamesPlayed = 1;
+    let originalPool = [], activePool = [], currentPair = null;
 
     function generateTable() {
         const table = document.getElementById('html-data-table');
         let html = '';
         for (let i = 0; i < data.length; i += 20) {
             let chunk = data.slice(i, i + 20);
-            html += '<tr>';
-            chunk.forEach((d, idx) => {
-                const globalIdx = i + idx;
-                const highlightClass = isHighlighted(globalIdx) ? 'highlight-cell' : '';
-                html += `<td class="val-top ${highlightClass}">${d[0]}</td>`;
-            });
-            html += '</tr><tr>';
-            chunk.forEach((d, idx) => {
-                const globalIdx = i + idx;
-                const highlightClass = isHighlighted(globalIdx) ? 'highlight-cell' : '';
-                html += `<td class="val-bottom ${highlightClass}">${d[1]}</td>`;
-            });
-            html += '</tr><tr style="height:10px"><td colspan="20" style="border:none"></td></tr>';
+            html += '<tr>' + chunk.map((d, idx) => `<td class="val-top ${(i+idx+1)%5===0?'highlight-cell':''}">${d[0]}</td>`).join('') + '</tr>';
+            html += '<tr>' + chunk.map((d, idx) => `<td class="val-bottom ${(i+idx+1)%5===0?'highlight-cell':''}">${d[1]}</td>`).join('') + '</tr>';
+            html += '<tr style="height:8px"><td colspan="20"></td></tr>';
         }
         table.innerHTML = html;
     }
     generateTable();
 
-    let originalPool = [], activePool = [], currentPair = null;
-
     function fillOptions() {
         const opt5 = document.getElementById('opt-5');
-        let counter5 = 1;
+        let count = 1;
         for(let i=0; i<85; i+=5) {
             let endIdx = Math.min(i + 5, 85);
-            const label = `${data[i][0]} - ${data[endIdx-1][0]}`;
-            opt5.innerHTML += `<div class="itc-select__option" onclick="selectRange(${i}, ${endIdx}, '${label}', 'mode-5')">${counter5}) ${label}</div>`;
-            counter5++;
+            let label = `${data[i][0]} - ${data[endIdx-1][0]}`;
+            let div = document.createElement('div');
+            div.style.padding = '8px'; div.style.cursor = 'pointer'; div.style.borderBottom = '1px solid #eee';
+            div.innerHTML = `<span style="color:#888; margin-right:5px;">${count})</span> ${label}`;
+            div.onclick = (e) => { e.stopPropagation(); selectRange(i, endIdx, label, 'mode-5'); };
+            opt5.appendChild(div);
+            count++;
         }
         const optRow = document.getElementById('opt-row');
-        const rowLabels = ['1.01 - 1.2', '1.21 - 1.4', '1.41 - 1.6', '1.61 - 1.85'];
-        const rowRanges = [[0,20], [20,40], [40,60], [60,85]];
-        rowLabels.forEach((l, idx) => {
-            optRow.innerHTML += `<div class="itc-select__option" onclick="selectRange(${rowRanges[idx][0]}, ${rowRanges[idx][1]}, '${l}', 'mode-row')">${idx + 1}) ${l}</div>`;
+        const ranges = [[0,20], [20,40], [40,60], [60,85]];
+        ranges.forEach((r, idx) => {
+            let label = `Տող ${idx+1} (${data[r[0]][0]}-${data[r[1]-1][0]})`;
+            let div = document.createElement('div');
+            div.style.padding = '8px'; div.style.cursor = 'pointer'; div.style.borderBottom = '1px solid #eee';
+            div.innerHTML = `<span style="color:#888; margin-right:5px;">${idx+1})</span> ${label}`;
+            div.onclick = (e) => { e.stopPropagation(); selectRange(r[0], r[1], label, 'mode-row'); };
+            optRow.appendChild(div);
         });
     }
     fillOptions();
 
     function toggleDropdown(id) {
-        const drop = document.getElementById(id);
-        const isOpen = drop.classList.contains('show');
-        document.querySelectorAll('.itc-select__dropdown').forEach(d => d.classList.remove('show'));
-        if (!isOpen) drop.classList.add('show');
+        document.querySelectorAll('.itc-select__dropdown').forEach(d => { if(d.id !== id) d.classList.add('hidden'); });
+        document.getElementById(id).classList.toggle('hidden');
     }
 
     function selectRange(start, end, label, parentId) {
         originalPool = data.slice(start, end);
-        document.querySelectorAll('.itc-select').forEach(s => s.classList.remove('selected-mode'));
+        document.querySelectorAll('.itc-select').forEach(el => el.classList.remove('selected-mode'));
         document.getElementById(parentId).classList.add('selected-mode');
-        document.querySelector(`#${parentId} .itc-select__toggle`).innerText = label;
+        if(parentId === 'mode-5') document.getElementById('label-5').innerText = label;
+        if(parentId === 'mode-row') document.getElementById('label-row').innerText = label;
+        document.querySelectorAll('.itc-select__dropdown').forEach(d => d.classList.add('hidden'));
     }
 
     function initGame() {
         if (originalPool.length === 0) return alert("Խնդրում ենք ընտրել ռեժիմը!");
+        lives = 3;
+        updateUI();
         document.getElementById('profit-table').classList.add('hidden');
         document.getElementById('setup-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.add('flex-show');
+        document.getElementById('game-screen').style.display = 'flex';
+        document.getElementById('game-status').classList.remove('hidden');
         activePool = [...originalPool];
         document.getElementById('history-list').innerHTML = '';
         nextRound();
     }
 
-    function restartCurrentMode() {
-        activePool = [...originalPool];
-        document.getElementById('history-list').innerHTML = '';
-        document.getElementById('user-input').style.display = 'block';
-        nextRound();
+    function updateUI() {
+        document.getElementById('hearts-display').innerText = "❤️".repeat(lives);
+        document.getElementById('count-display').innerText = `Խաղ: ${gamesPlayed}`;
     }
 
     function nextRound() {
-        if (activePool.length === 0) return endGame();
+        if (activePool.length === 0) return endGame(true);
         const randomIndex = Math.floor(Math.random() * activePool.length);
         currentPair = activePool.splice(randomIndex, 1)[0];
         const showTop = Math.random() > 0.5;
@@ -353,7 +305,7 @@
         display.innerText = displayVal;
         display.dataset.answer = targetVal;
         const input = document.getElementById('user-input');
-        input.value = ''; input.className = ''; input.focus();
+        input.value = ''; input.className = ''; input.style.display = 'block'; input.focus();
         const btn = document.getElementById('main-btn');
         btn.innerText = 'Ստուգել'; btn.onclick = checkAnswer; btn.className = 'btn-check';
     }
@@ -368,18 +320,21 @@
             addToHistory(display.innerText, correctAnswer);
             setTimeout(nextRound, 600);
         } else {
+            lives--;
+            updateUI();
             input.classList.add('wrong');
             setTimeout(() => input.classList.remove('wrong'), 600);
+            if(lives <= 0) endGame(false);
         }
     }
 
-    function endGame() {
-        document.getElementById('target-display').innerText = "ՎԵՐՋ";
+    function endGame(win) {
+        document.getElementById('target-display').innerText = win ? "ՀԱՂԹԱՆԱԿ" : "ՊԱՐՏՈՒԹՅՈՒՆ";
         document.getElementById('user-input').style.display = 'none';
         const btn = document.getElementById('main-btn');
         btn.innerText = 'Կրկնել'; btn.className = 'btn-restart';
-        btn.onclick = restartCurrentMode;
-        startAutoFireworks();
+        btn.onclick = () => { gamesPlayed++; initGame(); };
+        if(win) startAutoFireworks();
     }
 
     function addToHistory(q, a) {
@@ -390,14 +345,65 @@
         list.prepend(div);
     }
 
-    document.getElementById('user-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkAnswer();
-    });
+    document.getElementById('user-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
 
-    window.onclick = (e) => {
-        if (!e.target.matches('.itc-select__toggle')) {
-            document.querySelectorAll('.itc-select__dropdown').forEach(d => d.classList.remove('show'));
+    const canvas = document.getElementById("magicCanvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener("resize", resize); resize();
+    
+    class Particle {
+        constructor(x, y, color) {
+            this.x = x; this.y = y; 
+            const angle = Math.random() * Math.PI * 2;
+            const force = Math.random() * 6 + 1;
+            this.vx = Math.cos(angle) * force; 
+            this.vy = Math.sin(angle) * force; 
+            this.life = 100;
+            this.color = color || `rgba(255,214,10,`;
         }
+        update() { 
+            this.x += this.vx; 
+            this.y += this.vy; 
+            this.vy += 0.05; 
+            this.life -= 1.5; 
+        }
+        draw() { 
+            ctx.fillStyle = `${this.color}${this.life/100})`; 
+            ctx.beginPath(); 
+            ctx.arc(this.x, this.y, 2, 0, Math.PI*2); 
+            ctx.fill(); 
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    function createFirework(x, y) {
+        const colors = ['rgba(255,214,10,', 'rgba(0,122,255,', 'rgba(52,199,89,', 'rgba(255,59,48,', 'rgba(175,82,222,'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        for(let i=0; i<60; i++) particles.push(new Particle(x, y, color));
+    }
+
+    function startAutoFireworks() {
+        let startTime = Date.now();
+        const duration = 5000; 
+
+        const interval = setInterval(() => {
+            if (Date.now() - startTime > duration) {
+                clearInterval(interval);
+                return;
+            }
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * (canvas.height * 0.7);
+            createFirework(x, y);
+        }, 300); 
     }
 </script>
 </body>
