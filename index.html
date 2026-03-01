@@ -2,9 +2,18 @@
 <html lang="hy">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1972/1972429.png" type="image/png">
-    <title>7.5% Profit Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <link rel="icon" href="./logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="./logo.png">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Profit Quiz">
+    
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJkZWZhdWx0X2xvY2FsZSI6ICJoeSIsCiAgInN1bW1hcnkiOiAiUHJvZml0IDcuNSUgUXVpeiIsCiAgIm5hbWUiOiAiUHJvZml0IDcuNSUgUXVpeiIsCiAgInNob3J0X25hbWUiOiAiUHJvZml0IFF1aXoiLAogICJkZXNjcmlwdGlvbiI6ICJRdWl6IGdhbWUgZm9yIHByb2ZpdCBjYWxjdWxhdGlvbnMiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2Nkbi1pY29ucy1wbmcuZmxhdGljb24uY29tLzUxMi8xOTcyLzE5NzI0MjkucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXSwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwMDAwIgp9">
+
+    <title>Profit 7.5% Quiz</title>
     <style>
         :root {
             --win-accent: #007aff;
@@ -23,8 +32,28 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 10px;
+            padding: 0 10px 40px 10px;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
+
+        .navbar {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            color: white;
+            font-size: 13px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        .navbar a { color: #007aff; text-decoration: none; font-weight: 600; }
+        .version-tag { opacity: 0.7; font-family: monospace; grid-column: 1; }
+        .copyright-tag { grid-column: 2; text-align: center; }
 
         #magicCanvas {
             position: fixed;
@@ -40,7 +69,7 @@
             text-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        .window {
+        .window, .data-table-container {
             background: var(--glass);
             backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.4);
@@ -52,6 +81,11 @@
             z-index: 10;
             overflow: hidden;
             margin-bottom: 30px;
+        }
+
+        .data-table-container {
+            max-width: 900px;
+            display: none;
         }
 
         .window-header {
@@ -80,118 +114,89 @@
         .dot.green { background: #27c93f; }
         
         #current-mode-display {
-            font-size: 11px;
-            font-weight: 600;
-            color: #555;
-            margin-left: 10px;
-            background: rgba(0,0,0,0.05);
-            padding: 2px 8px;
-            border-radius: 5px;
+            font-size: 11px; font-weight: 600; color: #555;
+            margin-left: 10px; background: rgba(0,0,0,0.05);
+            padding: 2px 8px; border-radius: 5px;
         }
 
-        .game-info { display: flex; gap: 15px; align-items: center; }
+        .game-info { display: flex; gap: 10px; align-items: center; }
         .hearts { color: #ff3b30; font-size: 16px; transition: transform 0.2s; }
         .game-count { background: rgba(0,0,0,0.08); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
 
         .combo-badge {
             background: linear-gradient(135deg, #ff9500, #ff3b30);
-            color: white;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 800;
-            display: none;
-            animation: bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes bounce {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
+            color: white; padding: 2px 8px; border-radius: 12px;
+            font-size: 10px; font-weight: 800; display: none;
+            white-space: nowrap; animation: bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .hearts.shake { animation: heartPop 0.4s linear; }
-        @keyframes heartPop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.4); }
-            100% { transform: scale(1); }
+        @keyframes bounce { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .content { padding: 20px; position: relative; }
+
+        .back-btn {
+            position: absolute; top: 10px; left: 10px;
+            background: #000; color: white; border: none;
+            border-radius: 6px; width: 30px; height: 30px;
+            cursor: pointer; font-size: 18px; display: flex;
+            align-items: center; justify-content: center; z-index: 20;
         }
 
-        .thumb-feedback {
-            position: fixed; font-size: 50px; pointer-events: none; z-index: 10000;
-            animation: thumbUp 0.8s ease-out forwards;
-        }
-        @keyframes thumbUp {
-            0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            50% { opacity: 1; transform: translateY(-50px) scale(1.2); }
-            100% { transform: translateY(-100px) scale(1); opacity: 0; }
+        .btn-show-table {
+            background: #000; color: #fff; border: none;
+            padding: 12px 25px; border-radius: 12px;
+            font-weight: 700; cursor: pointer; margin-bottom: 20px;
+            animation: pulse-black 2s infinite;
         }
 
-        .content { padding: 20px; }
-
-        .itc-select {
-            border: 2px solid transparent;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            margin-bottom: 8px;
-        }
-        
-        .itc-select.selected-mode {
-            border-color: var(--win-accent);
-            box-shadow: 0 0 10px rgba(0, 122, 255, 0.3);
+        @keyframes pulse-black {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
         }
 
+        .itc-select { border: 2px solid transparent; border-radius: 12px; transition: all 0.3s ease; margin-bottom: 8px; }
+        .itc-select.selected-mode { border-color: var(--win-accent); box-shadow: 0 0 10px rgba(0, 122, 255, 0.3); }
         .itc-select__toggle {
-            width: 100%; padding: 10px 15px; 
-            background: #fff; color: #000;
-            border: 1px solid #ddd; border-radius: 10px; 
-            cursor: pointer; font-weight: 500; font-size: 14px;
-            display: flex; justify-content: flex-start; align-items: center;
+            width: 100%; padding: 10px 15px; background: #fff; color: #000;
+            border: 1px solid #ddd; border-radius: 10px; cursor: pointer;
+            font-weight: 500; font-size: 14px; display: flex; align-items: center;
         }
 
         .mode-num {
-            background: #eee;
-            width: 22px; height: 22px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; margin-right: 12px; font-size: 11px; font-weight: 700;
+            background: #eee; width: 22px; height: 22px; display: flex;
+            align-items: center; justify-content: center; border-radius: 50%;
+            margin-right: 12px; font-size: 11px; font-weight: 700;
         }
 
         .btn-play-container { display: flex; justify-content: center; width: 100%; gap: 10px; }
         .btn-play, .btn-restart, .btn-next {
             background: #000; color: white; border: none; border-radius: 8px;
             padding: 8px 25px; font-size: 14px; font-weight: 600;
-            cursor: pointer; margin-top: 15px; width: auto;
+            cursor: pointer; margin-top: 15px;
         }
         .btn-next { background: var(--win-success); }
 
-        .data-table-container {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.3);
-            width: 95%; max-width: 900px; overflow-x: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        table {
-            width: 100%; border-collapse: separate; border-spacing: 2px;
-            font-size: 10px; text-align: center; background: rgba(255,255,255,0.4);
-        }
-
+        .table-scroll-area { padding: 15px; overflow-x: auto; }
+        table { width: 100%; border-collapse: separate; border-spacing: 2px; font-size: 10px; text-align: center; }
         td { padding: 3px; border-radius: 2px; }
         .val-top { font-weight: 700; color: #000; background: rgba(255,255,255,0.6); }
         .val-bottom { color: #333; background: rgba(240,240,240,0.5); }
-        
-        .highlight-cell { background-color: #8f8f8e !important; color: #000000 !important; }
+        .highlight-cell { background-color: rgba(0,0,0,0.1) !important; color: #000000 !important; }
 
-        #game-screen { display: none; flex-direction: column; align-items: center; gap: 15px; }
-        .target-number { font-size: 60px; font-weight: 800; color: #1d1d1f; transition: font-size 0.3s ease; }
+        #game-screen { display: none; flex-direction: column; align-items: center; gap: 15px; padding-top: 20px; }
+        .target-number { font-size: 60px; font-weight: 800; color: #1d1d1f; }
         .target-number.end-status { font-size: 35px; }
 
         .mistakes-container {
             width: 100%; margin-top: 10px; padding: 10px; background: rgba(255, 59, 48, 0.1);
-            border-radius: 10px; font-size: 13px; color: #d32f2f; text-align: left;
+            border-radius: 10px; font-size: 13px; color: #d32f2f;
         }
 
+        .input-group { position: relative; }
+
         input[type="text"] {
-            width: 120px; padding: 12px; border: 2px solid #ddd; border-radius: 12px;
+            width: 100px; padding: 12px; border: 2px solid #ddd; border-radius: 12px;
             font-size: 24px; text-align: center; outline: none;
         }
         .btn-check { background: #000; color: white; border: none; padding: 0 20px; border-radius: 12px; cursor: pointer; }
@@ -205,14 +210,35 @@
         input.wrong { border-color: var(--win-error); animation: shake 0.3s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
         
-        .dropdown-separator { border-bottom: 2px solid #000; margin: 2px 0; }
+        .bubble-feedback {
+            position: fixed;
+            color: #34c759;
+            font-weight: 800;
+            font-size: 32px;
+            pointer-events: none;
+            z-index: 10000;
+            animation: floatBubble 2.5s ease-out forwards;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        @keyframes floatBubble {
+            0% { transform: translateY(0) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-150px) scale(1.2); opacity: 0; }
+        }
+
+        .mode-separator { height: 2px; background: #000; margin: 5px 0; border-radius: 2px; opacity: 0.8; }
     </style>
 </head>
 <body>
 
+<div class="navbar">
+    <span class="version-tag">Version 1.4 PWA</span>
+    <span class="copyright-tag">© Website by <a href="https://eriikvardanyan.github.io/myportfolio/" target="_blank">Erik Vardanyan</a>, 2026. </span>
+</div>
+
 <canvas id="magicCanvas"></canvas>
 
-<div class="site-title">7.5% Profit</div>
+<div class="site-title"></div>
 
 <div class="window">
     <div class="window-header">
@@ -223,7 +249,7 @@
             <div id="current-mode-display" class="hidden"></div>
         </div>
         <div class="game-info hidden" id="game-status">
-            <div id="combo-display" class="combo-badge">🔥 COMBO 0</div>
+            <div id="combo-display" class="combo-badge">🔥 0</div>
             <div class="game-count" id="count-display">Խաղ: 1</div>
             <div class="hearts" id="hearts-display">❤️❤️❤️</div>
         </div>
@@ -232,6 +258,8 @@
     <div class="progress-container"><div id="progress-bar"></div></div>
 
     <div class="content">
+        <button id="back-to-setup" class="back-btn hidden" onclick="goToSetup()">↰</button>
+
         <div id="setup-screen">
             <h3 style="text-align:center; margin:0 0 15px 0;">Ընտրեք ռեժիմը</h3>
             <div class="modes-container" id="modes-list">
@@ -239,7 +267,7 @@
                     <button class="itc-select__toggle" onclick="toggleDropdown('opt-5')">
                         <span class="mode-num">1</span> <span id="label-5">Ըստ 5 հատի</span>
                     </button>
-                    <div class="itc-select__dropdown hidden" id="opt-5" style="background:white; border-radius:10px; padding:5px; margin-top:5px; max-height:150px; overflow-y:auto; color:black; font-size:13px; border: 1px solid #eee;"></div>
+                    <div class="itc-select__dropdown hidden" id="opt-5" style="background:white; border-radius:10px; padding:5px; margin-top:5px; max-height:200px; overflow-y:auto; color:black; font-size:13px; border: 1px solid #eee;"></div>
                 </div>
                 <div class="itc-select" id="mode-row">
                     <button class="itc-select__toggle" onclick="toggleDropdown('opt-row')">
@@ -275,11 +303,33 @@
     </div>
 </div>
 
+<button class="btn-show-table" id="table-toggle-btn" onclick="showProfitTable()">7.5% Profit</button>
+
 <div class="data-table-container" id="profit-table">
-    <table id="html-data-table"></table>
+    <div class="window-header">
+        <div class="mac-dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+        </div>
+        <div style="font-size: 11px; font-weight: 700; opacity: 0.6;">Աղյուսակ</div>
+    </div>
+    <div class="table-scroll-area">
+        <table id="html-data-table"></table>
+    </div>
 </div>
 
 <script>
+    // Регистрируем пустой Service Worker для поддержки PWA (необходим для Android)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const swCode = `self.addEventListener('fetch', function(event) { event.respondWith(fetch(event.request)); });`;
+            const blob = new Blob([swCode], {type: 'text/javascript'});
+            const url = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(url);
+        });
+    }
+
     const data = [
         [1.01, 11], [1.02, 9.9], [1.03, 9.05], [1.04, 8.35], [1.05, 7.77], [1.06, 7.25], [1.07, 6.8], [1.08, 6.45], [1.09, 6.1], [1.1, 5.8], [1.11, 5.55], [1.12, 5.3], [1.13, 5.1], [1.14, 4.9], [1.15, 4.7], [1.16, 4.55], [1.17, 4.4], [1.18, 4.2], [1.19, 4.15], [1.2, 4],
         [1.21, 3.9], [1.22, 3.8], [1.23, 3.7], [1.24, 3.6], [1.25, 3.55], [1.26, 3.45], [1.27, 3.4], [1.28, 3.35], [1.29, 3.25], [1.3, 3.2], [1.31, 3.15], [1.32, 3.1], [1.33, 3], [1.34, 2.95], [1.35, 2.9], [1.36, 2.89], [1.37, 2.85], [1.38, 2.8], [1.39, 2.75], [1.4, 2.7],
@@ -295,6 +345,22 @@
     let mistakes = [];
     let currentModeLabel = "";
     let lastStartIndex = -1;
+    let lastRowIndex = -1;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playPlopSound() {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    }
 
     function generateTable() {
         const table = document.getElementById('html-data-table');
@@ -309,6 +375,11 @@
     }
     generateTable();
 
+    function showProfitTable() {
+        document.getElementById('profit-table').style.display = 'block';
+        document.getElementById('table-toggle-btn').style.display = 'none';
+    }
+
     function fillOptions() {
         const opt5 = document.getElementById('opt-5');
         let count = 1;
@@ -319,12 +390,12 @@
             let div = document.createElement('div');
             div.style.padding = '8px'; div.style.cursor = 'pointer'; div.style.borderBottom = '1px solid #eee';
             div.innerHTML = `<span style="color:#888; margin-right:5px;">${count})</span> ${label}`;
-            div.onclick = (e) => { e.stopPropagation(); lastStartIndex = i; selectRange(i, endIdx, fullLabel, 'mode-5'); };
+            div.onclick = (e) => { e.stopPropagation(); lastStartIndex = i; lastRowIndex = -1; selectRange(i, endIdx, fullLabel, 'mode-5'); };
             opt5.appendChild(div);
             
             if (count % 4 === 0 && i + 5 < 85) {
                 let sep = document.createElement('div');
-                sep.className = 'dropdown-separator';
+                sep.className = 'mode-separator';
                 opt5.appendChild(sep);
             }
             count++;
@@ -337,25 +408,27 @@
             let div = document.createElement('div');
             div.style.padding = '8px'; div.style.cursor = 'pointer'; div.style.borderBottom = '1px solid #eee';
             div.innerHTML = `<span style="color:#888; margin-right:5px;">${idx+1})</span> ${label}`;
-            div.onclick = (e) => { e.stopPropagation(); lastStartIndex = -1; selectRange(r[0], r[1], label, 'mode-row'); };
+            div.onclick = (e) => { e.stopPropagation(); lastStartIndex = -1; lastRowIndex = idx; selectRange(r[0], r[1], label, 'mode-row'); };
             optRow.appendChild(div);
         });
-        
-        let divHighlight = document.createElement('div');
-        divHighlight.style.padding = '8px'; divHighlight.style.cursor = 'pointer'; divHighlight.style.borderBottom = '1px solid #eee';
-        divHighlight.innerHTML = `<span style="color:#888; margin-right:5px;">5)</span> Սևացվածներ`;
-        divHighlight.onclick = (e) => { 
+
+        let blackLabel = "Սևացվածներ";
+        let blackDiv = document.createElement('div');
+        blackDiv.style.padding = '8px'; blackDiv.style.cursor = 'pointer'; blackDiv.style.fontWeight = 'bold';
+        blackDiv.innerHTML = `<span style="color:#888; margin-right:5px;">5)</span> ${blackLabel}`;
+        blackDiv.onclick = (e) => { 
             e.stopPropagation(); 
-            const highlightedData = data.filter((_, index) => (index + 1) % 5 === 0);
-            originalPool = highlightedData;
-            currentModeLabel = "Սևացվածներ";
-            lastStartIndex = -1;
+            lastStartIndex = -1; 
+            lastRowIndex = 4;
+            const blackPool = data.filter((_, index) => (index + 1) % 5 === 0);
+            originalPool = blackPool;
+            currentModeLabel = blackLabel;
             document.querySelectorAll('.itc-select').forEach(el => el.classList.remove('selected-mode'));
             document.getElementById('mode-row').classList.add('selected-mode');
-            document.getElementById('label-row').innerText = "Սևացվածներ";
-            document.querySelectorAll('.itc-select__dropdown').forEach(d => d.classList.add('hidden'));
+            document.getElementById('label-row').innerText = blackLabel;
+            toggleDropdown('opt-row');
         };
-        optRow.appendChild(divHighlight);
+        optRow.appendChild(blackDiv);
     }
     fillOptions();
 
@@ -374,32 +447,37 @@
         document.querySelectorAll('.itc-select__dropdown').forEach(d => d.classList.add('hidden'));
     }
 
+    function goToSetup() {
+        document.getElementById('setup-screen').classList.remove('hidden');
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('game-status').classList.add('hidden');
+        document.getElementById('current-mode-display').classList.add('hidden');
+        document.getElementById('back-to-setup').classList.add('hidden');
+        document.getElementById('table-toggle-btn').style.display = 'inline-block';
+        comboCount = 0;
+    }
+
     function initGame() {
         if (originalPool.length === 0) return alert("Խնդրում ենք ընտրել ռեժիմը!");
+        document.getElementById('profit-table').style.display = 'none';
+        document.getElementById('table-toggle-btn').style.display = 'none';
         lives = 3;
         comboCount = 0;
         mistakes = [];
         updateUI();
-        document.getElementById('profit-table').classList.add('hidden');
         document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('game-screen').style.display = 'flex';
         document.getElementById('game-status').classList.remove('hidden');
-        document.getElementById('combo-display').style.display = 'none';
-        
+        document.getElementById('back-to-setup').classList.remove('hidden');
         const modeDisplay = document.getElementById('current-mode-display');
         modeDisplay.innerText = currentModeLabel;
         modeDisplay.classList.remove('hidden');
-
         activePool = [...originalPool];
         document.getElementById('history-list').innerHTML = '';
         document.getElementById('progress-bar').style.width = '0%';
-        
-        const display = document.getElementById('target-display');
-        display.classList.remove('end-status');
-        
+        document.getElementById('target-display').classList.remove('end-status');
         document.getElementById('input-area').classList.remove('hidden');
         document.getElementById('end-buttons').classList.add('hidden');
-
         nextRound();
     }
 
@@ -408,24 +486,9 @@
         document.getElementById('count-display').innerText = `Խաղ: ${gamesPlayed}`;
     }
 
-    function updateCombo() {
-        const comboEl = document.getElementById('combo-display');
-        const showCombo = (comboCount === 3 || comboCount === 5 || (comboCount > 0 && comboCount % 10 === 0));
-        
-        if (showCombo) {
-            comboEl.innerText = `🔥 COMBO ${comboCount}`;
-            comboEl.style.display = 'block';
-            comboEl.style.animation = 'none';
-            comboEl.offsetHeight; 
-            comboEl.style.animation = 'bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-            if(navigator.vibrate) navigator.vibrate(50);
-        }
-    }
-
     function nextRound() {
         const progress = ((originalPool.length - activePool.length) / originalPool.length) * 100;
         document.getElementById('progress-bar').style.width = progress + '%';
-
         if (activePool.length === 0) return endGame(true);
         const randomIndex = Math.floor(Math.random() * activePool.length);
         currentPair = activePool.splice(randomIndex, 1)[0];
@@ -436,17 +499,22 @@
         display.innerText = displayVal;
         display.dataset.answer = targetVal;
         const input = document.getElementById('user-input');
-        input.value = ''; input.className = ''; input.style.display = 'block'; input.focus();
+        input.value = ''; input.className = ''; input.focus();
     }
 
-    function showThumb() {
-        const thumb = document.createElement('div');
-        thumb.className = 'thumb-feedback';
-        thumb.innerText = "👍";
-        thumb.style.left = (window.innerWidth / 2 - 25) + 'px';
-        thumb.style.top = (window.innerHeight / 2) + 'px';
-        document.body.appendChild(thumb);
-        setTimeout(() => thumb.remove(), 800);
+    function showBubbleFeedback() {
+        const inputArea = document.getElementById('input-area');
+        const rect = inputArea.getBoundingClientRect();
+        const posX = Math.random() > 0.5 ? rect.left : rect.right;
+        const posY = rect.top;
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble-feedback';
+        bubble.innerText = "+1";
+        bubble.style.left = posX + 'px';
+        bubble.style.top = posY + 'px';
+        document.body.appendChild(bubble);
+        setTimeout(() => bubble.remove(), 2500);
+        playPlopSound();
     }
 
     function checkAnswer() {
@@ -458,21 +526,14 @@
         if (userAnswer === correctAnswer) {
             input.classList.add('correct');
             comboCount++;
-            updateCombo();
-            showThumb();
+            showBubbleFeedback();
             addToHistory(display.innerText, correctAnswer);
             setTimeout(nextRound, 600);
         } else {
             lives--;
             comboCount = 0;
-            document.getElementById('combo-display').style.display = 'none';
-            const hearts = document.getElementById('hearts-display');
-            hearts.classList.add('shake');
-            setTimeout(() => hearts.classList.remove('shake'), 400);
-
+            if (navigator.vibrate) navigator.vibrate(500);
             mistakes.push(`${display.innerText} ➔ ${correctAnswer}`);
-
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
             updateUI();
             input.classList.add('wrong');
             setTimeout(() => input.classList.remove('wrong'), 600);
@@ -484,8 +545,6 @@
         const display = document.getElementById('target-display');
         display.classList.add('end-status');
         display.innerText = win ? "ՀԱՂԹԱՆԱԿ" : "ՊԱՐՏՈՒԹՅՈՒՆ";
-        document.getElementById('combo-display').style.display = 'none';
-        
         if (mistakes.length > 0) {
             const list = document.getElementById('history-list');
             const mContainer = document.createElement('div');
@@ -493,13 +552,13 @@
             mContainer.innerHTML = `<strong>Սխալներիդ ուղղումը:</strong><br>${mistakes.join('<br>')}`;
             list.prepend(mContainer);
         }
-
         document.getElementById('input-area').classList.add('hidden');
         document.getElementById('end-buttons').classList.remove('hidden');
-        
         document.getElementById('restart-btn').onclick = () => { gamesPlayed++; initGame(); };
         
         const nextBtn = document.getElementById('next-btn');
+        nextBtn.classList.add('hidden');
+
         if (lastStartIndex !== -1 && lastStartIndex + 5 < 85) {
             nextBtn.classList.remove('hidden');
             nextBtn.onclick = () => {
@@ -507,15 +566,30 @@
                 let endIdx = Math.min(lastStartIndex + 5, 85);
                 let labelText = `${data[lastStartIndex][0]} - ${data[endIdx-1][0]}`;
                 let count = (lastStartIndex / 5) + 1;
-                let fullLabel = `${count}) ${labelText}`;
-                selectRange(lastStartIndex, endIdx, fullLabel, 'mode-5');
+                selectRange(lastStartIndex, endIdx, `${count}) ${labelText}`, 'mode-5');
                 gamesPlayed++;
                 initGame();
             };
-        } else {
-            nextBtn.classList.add('hidden');
+        } 
+        else if (lastRowIndex !== -1 && lastRowIndex < 4) {
+            nextBtn.classList.remove('hidden');
+            nextBtn.onclick = () => {
+                lastRowIndex++;
+                if (lastRowIndex < 4) {
+                    const ranges = [[0,20], [20,40], [40,60], [60,85]];
+                    let r = ranges[lastRowIndex];
+                    let label = `Տող ${lastRowIndex+1} (${data[r[0]][0]}-${data[r[1]-1][0]})`;
+                    selectRange(r[0], r[1], label, 'mode-row');
+                } else if (lastRowIndex === 4) {
+                    const blackPool = data.filter((_, index) => (index + 1) % 5 === 0);
+                    originalPool = blackPool;
+                    currentModeLabel = "Սևացվածներ";
+                    document.getElementById('label-row').innerText = currentModeLabel;
+                }
+                gamesPlayed++;
+                initGame();
+            };
         }
-
         if(win) startAutoFireworks();
     }
 
@@ -545,17 +619,10 @@
             this.life = 100;
             this.color = color || `rgba(255,214,10,`;
         }
-        update() { 
-            this.x += this.vx; 
-            this.y += this.vy; 
-            this.vy += 0.05; 
-            this.life -= 1.5; 
-        }
+        update() { this.x += this.vx; this.y += this.vy; this.vy += 0.05; this.life -= 1.5; }
         draw() { 
             ctx.fillStyle = `${this.color}${this.life/100})`; 
-            ctx.beginPath(); 
-            ctx.arc(this.x, this.y, 2, 0, Math.PI*2); 
-            ctx.fill(); 
+            ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fill(); 
         }
     }
 
@@ -575,15 +642,9 @@
 
     function startAutoFireworks() {
         let startTime = Date.now();
-        const duration = 5000; 
         const interval = setInterval(() => {
-            if (Date.now() - startTime > duration) {
-                clearInterval(interval);
-                return;
-            }
-            const x_rand = Math.random() * canvas.width;
-            const y = Math.random() * (canvas.height * 0.7);
-            createFirework(x_rand, y);
+            if (Date.now() - startTime > 5000) return clearInterval(interval);
+            createFirework(Math.random() * canvas.width, Math.random() * (canvas.height * 0.7));
         }, 300); 
     }
 </script>
