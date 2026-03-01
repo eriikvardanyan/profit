@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <link rel="icon" href="./logo.png" type="image/png">
-    <link rel="apple-touch-icon" href="./logo.png">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1972/1972429.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1972/1972429.png">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -41,19 +41,27 @@
             width: 100%;
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
-            padding: 10px 20px;
+            padding: 10px 15px;
             color: white;
             font-size: 13px;
             margin-bottom: 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             box-sizing: border-box;
         }
-        .navbar a { color: #007aff; text-decoration: none; font-weight: 600; }
-        .version-tag { opacity: 0.7; font-family: monospace; grid-column: 1; }
-        .copyright-tag { grid-column: 2; text-align: center; }
+        
+        @media (max-width: 480px) {
+            .navbar {
+                font-size: 10px;
+                padding: 8px 10px;
+            }
+        }
+
+        .navbar a { color: #007aff;  font-weight: 600; }
+        .version-tag { opacity: 0.7; font-family: monospace; }
+        .copyright-tag { text-align: right; }
 
         #magicCanvas {
             position: fixed;
@@ -232,8 +240,8 @@
 <body>
 
 <div class="navbar">
-    <span class="version-tag">Version 1.4 PWA</span>
-    <span class="copyright-tag">© Website by <a href="https://eriikvardanyan.github.io/myportfolio/" target="_blank">Erik Vardanyan</a>, 2026. </span>
+    <span class="version-tag">Version 1.4</span>
+    <span class="copyright-tag">© Website by Browser <a href="https://eriikvardanyan.github.io/myportfolio/" target="_blank">Erik Vardanyan</a>.</span>
 </div>
 
 <canvas id="magicCanvas"></canvas>
@@ -320,7 +328,6 @@
 </div>
 
 <script>
-    // Регистрируем пустой Service Worker для поддержки PWA (необходим для Android)
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             const swCode = `self.addEventListener('fetch', function(event) { event.respondWith(fetch(event.request)); });`;
@@ -484,6 +491,14 @@
     function updateUI() {
         document.getElementById('hearts-display').innerText = "❤️".repeat(lives);
         document.getElementById('count-display').innerText = `Խաղ: ${gamesPlayed}`;
+        
+        const comboEl = document.getElementById('combo-display');
+        if (comboCount >= 2) {
+            comboEl.innerText = `🔥 ${comboCount}`;
+            comboEl.style.display = 'block';
+        } else {
+            comboEl.style.display = 'none';
+        }
     }
 
     function nextRound() {
@@ -526,6 +541,7 @@
         if (userAnswer === correctAnswer) {
             input.classList.add('correct');
             comboCount++;
+            updateUI();
             showBubbleFeedback();
             addToHistory(display.innerText, correctAnswer);
             setTimeout(nextRound, 600);
