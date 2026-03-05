@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <link rel="icon" href="./logo.png" type="image/png">
+    <link rel="icon" href="./logomob.png" type="image/png">
     <link rel="apple-touch-icon" href="./logomob.png">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Profit Quiz">
-    
-    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJkZWZhdWx0X2xvY2FsZSI6ICJoeSIsCiAgInN1bW1hcnkiOiAiUHJvZml0IDcuNSUgUXVpeiIsCiAgIm5hbWUiOiAiUHJvZml0IDcuNSUgUXVpeiIsCiAgInNob3J0X25hbWUiOiAiUHJvZml0IFF1aXoiLAogICJkZXNjcmlwdGlvbiI6ICJRdWl6IGdhbWUgZm9yIHByb2ZpdCBjYWxjdWxhdGlvbnMiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2Nkbi1pY29ucy1wbmcuZmxhdGljb24uY29tLzUxMi8xOTcyLzE5NzI0MjkucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXSwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAwMDAiLAogICJ0aGVtZV9jb2xvciI6ICIjMDAwMDAwIgp9">
-
-    <title>Profit Quiz</title>
+    <meta name="apple-mobile-web-app-title" content="EProfit 7.5">
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJkZWZhdWx0X2xvY2FsZSI6ICJoeSIsCiAgInN1bW1hcnkiOiAiUHJvZml0IDcuNSUgUXVpeiIsCiAgIm5hbWUiOiAiUHJvZml0IDcuNSUgUXVpeiIsCiAgInNob3J0X25hbWUiOiAiUHJvZml0IFF1aXoiLAogICJkZXNjcmlwdGlvbiI6ICJRdWl6IGdhbWUgZm9yIHByb2ZpdCBjYWxjdWxhdGlvbnMiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2Nkbi1pY29ucy1wbmcuZmxhdGljb24uY29tLzUxMi8xOTcyLzE5NzI0MjkucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXSwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwMDAwMDAiLAogICJtIHRoZW1lX2NvbG9yIjogIiMwMDAwMDAiCn0=">
+    <title>EProfit 7.5</title>
     <style>
         :root {
             --win-accent: #007aff;
@@ -22,7 +18,6 @@
             --glass: rgba(255, 255, 255, 0.85);
             --radius: 18px;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: url('./beck-stars.jpg') no-repeat center center fixed;
@@ -36,7 +31,6 @@
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
         }
-
         .navbar {
             width: 100%;
             background: rgba(0, 0, 0, 0.3);
@@ -50,34 +44,19 @@
             justify-content: space-between;
             align-items: center;
             box-sizing: border-box;
-        }
-        
+        }  
         @media (max-width: 480px) {
-            .navbar {
-                font-size: 10px;
-                padding: 8px 10px;
-            }
+            .navbar { font-size: 10px; padding: 8px 10px; }
         }
-
         .navbar a { color: #007aff;  font-weight: 600; }
         .version-tag { opacity: 0.7; font-family: monospace; }
         .copyright-tag { text-align: right; }
-
         #magicCanvas {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 9999;
         }
-
-        .site-title {
-            color: white;
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 15px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .window, .data-table-container {
+        .window, .data-table-container, .settings-window {
             background: var(--glass);
             backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.4);
@@ -89,13 +68,22 @@
             z-index: 10;
             overflow: hidden;
             margin-bottom: 30px;
+            transition: box-shadow 0.5s ease;
         }
 
-        .data-table-container {
-            max-width: 900px;
-            display: none;
+        .settings-window { 
+            display: none; 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: 10001;
+            max-width: 350px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+            backdrop-filter: blur(40px);
         }
-
+        .data-table-container { max-width: 900px; display: none; }
         .window-header {
             background: rgba(255,255,255,0.5);
             height: 40px;
@@ -105,7 +93,6 @@
             justify-content: space-between;
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-
         .progress-container {
             width: 100%; height: 5px; background: rgba(0,0,0,0.05);
             position: absolute; top: 40px; left: 0;
@@ -114,22 +101,60 @@
             width: 0%; height: 100%; background: var(--win-success);
             transition: width 0.4s ease;
         }
-
         .mac-dots { display: flex; gap: 8px; align-items: center; }
         .dot { width: 11px; height: 11px; border-radius: 50%; }
         .dot.red { background: #ff5f56; }
         .dot.yellow { background: #ffbd2e; }
         .dot.green { background: #27c93f; }
         
-        #current-mode-display {
-            font-size: 11px; font-weight: 600; color: #555;
-            margin-left: 10px; background: rgba(0,0,0,0.05);
-            padding: 2px 8px; border-radius: 5px;
+        .header-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #333;
+            opacity: 0.8;
         }
 
-        .game-info { display: flex; gap: 10px; align-items: center; }
-        .hearts { color: #ff3b30; font-size: 16px; transition: transform 0.2s; }
+        #current-mode-display {
+            font-size: 10px; font-weight: 600; color: #555;
+            margin-left: 5px; background: rgba(0,0,0,0.05);
+            padding: 2px 6px; border-radius: 5px;
+            max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .game-info { display: flex; gap: 8px; align-items: center; }
+        .hearts { color: #ff3b30; font-size: 14px; transition: transform 0.2s; }
         .game-count { background: rgba(0,0,0,0.08); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+        
+        #round-stats {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        #round-counter-main {
+            background: rgba(0,0,0,0.08);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            border: 1px solid rgba(0,0,0,0.05);
+            min-width: 40px;
+            text-align: center;
+        }
+        #timer-display {
+            font-size: 11px;
+            font-weight: 800;
+            color: white;
+            background: var(--win-error);
+            padding: 5px 8px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(255,59,48,0.3);
+            min-width: 25px;
+            text-align: center;
+        }
 
         .combo-badge {
             background: linear-gradient(135deg, #ff9500, #ff3b30);
@@ -137,11 +162,8 @@
             font-size: 10px; font-weight: 800; display: none;
             white-space: nowrap; animation: bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
         @keyframes bounce { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-
         .content { padding: 20px; position: relative; }
-
         .back-btn {
             position: absolute; top: 10px; left: 10px;
             background: #000; color: white; border: none;
@@ -149,14 +171,12 @@
             cursor: pointer; font-size: 18px; display: flex;
             align-items: center; justify-content: center; z-index: 20;
         }
-
         .btn-show-table {
             background: #000; color: #fff; border: none;
             padding: 12px 25px; border-radius: 12px;
             font-weight: 700; cursor: pointer; margin-bottom: 20px;
             animation: pulse-black 2s infinite;
         }
-
         @keyframes pulse-black {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); }
@@ -177,22 +197,27 @@
             margin-right: 12px; font-size: 11px; font-weight: 700;
         }
 
-        .btn-play-container { display: flex; justify-content: center; width: 100%; gap: 10px; }
+        .btn-play-container { display: flex; justify-content: center; width: 100%; gap: 10px; align-items: center; }
         .btn-play, .btn-restart, .btn-next {
             background: #000; color: white; border: none; border-radius: 8px;
-            padding: 8px 25px; font-size: 14px; font-weight: 600;
+            padding: 11px 25px; font-size: 14px; font-weight: 600;
             cursor: pointer; margin-top: 15px;
+        }
+        .btn-settings {
+            background: #000; color: white; border: none; border-radius: 8px;
+            width: 38px; height: 38px; margin-top: 15px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
         }
         .btn-next { background: var(--win-success); }
 
         .table-scroll-area { padding: 15px; overflow-x: auto; }
         table { width: 100%; border-collapse: separate; border-spacing: 2px; font-size: 10px; text-align: center; }
-        td { padding: 3px; border-radius: 2px; }
+        td { padding: 3px; border-radius: 2px; position: relative; min-width: 30px; }
         .val-top { font-weight: 700; color: #000; background: rgba(255,255,255,0.6); }
         .val-bottom { color: #333; background: rgba(240,240,240,0.5); }
         .highlight-cell { background-color: rgba(0,0,0,0.1) !important; color: #000000 !important; }
 
-        #game-screen { display: none; flex-direction: column; align-items: center; gap: 15px; padding-top: 20px; }
+        #game-screen { display: none; flex-direction: column; align-items: center; gap: 15px; padding-top: 35px; }
         .target-number { font-size: 60px; font-weight: 800; color: #1d1d1f; }
         .target-number.end-status { font-size: 35px; }
 
@@ -200,8 +225,6 @@
             width: 100%; margin-top: 10px; padding: 10px; background: rgba(255, 59, 48, 0.1);
             border-radius: 10px; font-size: 13px; color: #d32f2f;
         }
-
-        .input-group { position: relative; }
 
         input[type="text"] {
             width: 100px; padding: 12px; border: 2px solid #ddd; border-radius: 12px;
@@ -219,36 +242,51 @@
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
         
         .bubble-feedback {
-            position: fixed;
-            color: #34c759;
-            font-weight: 800;
-            font-size: 32px;
-            pointer-events: none;
-            z-index: 10000;
-            animation: floatBubble 2.5s ease-out forwards;
+            position: fixed; color: #34c759; font-weight: 800; font-size: 32px;
+            pointer-events: none; z-index: 10000; animation: floatBubble 2.5s ease-out forwards;
             text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-
         @keyframes floatBubble {
             0% { transform: translateY(0) scale(0.5); opacity: 1; }
             100% { transform: translateY(-150px) scale(1.2); opacity: 0; }
         }
 
         .mode-separator { height: 2px; background: #000; margin: 5px 0; border-radius: 2px; opacity: 0.8; }
+
+        .settings-content { padding: 20px; }
+        .setting-row { margin-bottom: 20px; }
+        .setting-label { display: block; margin-bottom: 10px; font-weight: 700; font-size: 14px; }
+        .toggle-group { display: flex; gap: 10px; }
+        .toggle-btn {
+            flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
+            background: white; cursor: pointer; font-size: 13px; font-weight: 600;
+        }
+        .toggle-btn.active { background: #000; color: white; border-color: #000; }
+        
+        .btn-save-settings {
+            width: 70%;
+            display: block;
+            margin: 20px auto 0 auto;
+            padding: 12px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
 <div class="navbar">
-    <span class="version-tag">Version 1.4</span>
+    <span class="version-tag">Version 1.5</span>
     <span class="copyright-tag">© Website by <a href="https://eriikvardanyan.github.io/myportfolio/" target="_blank">Erik Vardanyan</a>.</span>
 </div>
 
 <canvas id="magicCanvas"></canvas>
 
-<div class="site-title"></div>
-
-<div class="window">
+<div class="window" id="main-window">
     <div class="window-header">
         <div class="mac-dots">
             <div class="dot red"></div>
@@ -256,6 +294,8 @@
             <div class="dot green"></div>
             <div id="current-mode-display" class="hidden"></div>
         </div>
+        <div id="setup-title" class="header-title">EProfit 7.5%</div>
+        
         <div class="game-info hidden" id="game-status">
             <div id="combo-display" class="combo-badge">🔥 0</div>
             <div class="game-count" id="count-display">Խաղ: 1</div>
@@ -267,6 +307,11 @@
 
     <div class="content">
         <button id="back-to-setup" class="back-btn hidden" onclick="goToSetup()">↰</button>
+        
+        <div id="round-stats" class="hidden">
+            <div id="round-counter-main">0/0</div>
+            <div id="timer-display" class="hidden">0.0</div>
+        </div>
 
         <div id="setup-screen">
             <h3 style="text-align:center; margin:0 0 15px 0;">Ընտրեք ռեժիմը</h3>
@@ -291,6 +336,9 @@
             </div>
             <div class="btn-play-container">
                 <button class="btn-play" onclick="initGame()">Խաղալ</button>
+                <button class="btn-settings" onclick="openSettings()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h14"></path><path d="M5 22h14"></path><path d="M6 2v6.7c0 .8.4 1.5 1 2l4 3.3-4 3.3c-.6.5-1 1.2-1 2V22"></path><path d="M18 2v6.7c0 .8-.4 1.5-1 2l-4 3.3 4 3.3c.6.5 1 1.2 1 2V22"></path></svg>
+                </button>
             </div>
         </div>
 
@@ -311,32 +359,46 @@
     </div>
 </div>
 
+<div class="settings-window" id="settings-window">
+    <div class="window-header">
+        <div class="mac-dots">
+            <div class="dot red" onclick="closeSettings()"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+        </div>
+        <div style="font-size: 11px; font-weight: 700;">Կարգավորումներ</div>
+    </div>
+    <div class="settings-content">
+        <div class="setting-row">
+            <span class="setting-label">Խաղի ռեժիմ</span>
+            <div class="toggle-group">
+                <button class="toggle-btn active" id="mode-no-timer" onclick="setTimerMode(false)">Առանց թայմերի</button>
+                <button class="toggle-btn" id="mode-with-timer" onclick="setTimerMode(true)">Թայմերով</button>
+            </div>
+        </div>
+        <div class="setting-row hidden" id="timer-options">
+            <span class="setting-label">Վայրկյաններ</span>
+            <div class="toggle-group">
+                <button class="toggle-btn active" id="t-5" onclick="setTimerSeconds(5)">5վ</button>
+                <button class="toggle-btn" id="t-7" onclick="setTimerSeconds(7)">7վ</button>
+                <button class="toggle-btn" id="t-10" onclick="setTimerSeconds(10)">10վ</button>
+            </div>
+        </div>
+        <button class="btn-save-settings" onclick="closeSettings()">Պահպանել</button>
+    </div>
+</div>
+
 <button class="btn-show-table" id="table-toggle-btn" onclick="showProfitTable()">7.5% Profit</button>
 
 <div class="data-table-container" id="profit-table">
     <div class="window-header">
-        <div class="mac-dots">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
-        </div>
+        <div class="mac-dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
         <div style="font-size: 11px; font-weight: 700; opacity: 0.6;">Աղյուսակ</div>
     </div>
-    <div class="table-scroll-area">
-        <table id="html-data-table"></table>
-    </div>
+    <div class="table-scroll-area" style="padding-top: 35px;"><table id="html-data-table"></table></div>
 </div>
 
 <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            const swCode = `self.addEventListener('fetch', function(event) { event.respondWith(fetch(event.request)); });`;
-            const blob = new Blob([swCode], {type: 'text/javascript'});
-            const url = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(url);
-        });
-    }
-
     const data = [
         [1.01, 11], [1.02, 9.9], [1.03, 9.05], [1.04, 8.35], [1.05, 7.77], [1.06, 7.25], [1.07, 6.8], [1.08, 6.45], [1.09, 6.1], [1.1, 5.8], [1.11, 5.55], [1.12, 5.3], [1.13, 5.1], [1.14, 4.9], [1.15, 4.7], [1.16, 4.55], [1.17, 4.4], [1.18, 4.2], [1.19, 4.15], [1.2, 4],
         [1.21, 3.9], [1.22, 3.8], [1.23, 3.7], [1.24, 3.6], [1.25, 3.55], [1.26, 3.45], [1.27, 3.4], [1.28, 3.35], [1.29, 3.25], [1.3, 3.2], [1.31, 3.15], [1.32, 3.1], [1.33, 3], [1.34, 2.95], [1.35, 2.9], [1.36, 2.89], [1.37, 2.85], [1.38, 2.8], [1.39, 2.75], [1.4, 2.7],
@@ -345,28 +407,43 @@
         [1.81, 1.89], [1.82, 1.88], [1.83, 1.87], [1.84, 1.86], [1.85, 1.85]
     ];
 
-    let lives = 3;
-    let gamesPlayed = 1;
-    let comboCount = 0;
-    let originalPool = [], activePool = [], currentPair = null;
-    let mistakes = [];
-    let currentModeLabel = "";
-    let lastStartIndex = -1;
-    let lastRowIndex = -1;
+    let lives = 3, gamesPlayed = 1, comboCount = 0, originalPool = [], activePool = [], currentPair = null;
+    let mistakes = [], currentModeLabel = "", lastStartIndex = -1, lastRowIndex = -1;
+    
+    let useTimer = false, timerLimit = 5, timeLeft = 5, timerInterval = null;
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
     function playPlopSound() {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.type = 'sine'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.2);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function playErrorSound() {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+    }
+
+    function playTickSound() {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.05);
     }
 
     function generateTable() {
@@ -374,18 +451,30 @@
         let html = '';
         for (let i = 0; i < data.length; i += 20) {
             let chunk = data.slice(i, i + 20);
-            html += '<tr>' + chunk.map((d, idx) => `<td class="val-top ${(i+idx+1)%5===0?'highlight-cell':''}">${d[0]}</td>`).join('') + '</tr>';
-            html += '<tr>' + chunk.map((d, idx) => `<td class="val-bottom ${(i+idx+1)%5===0?'highlight-cell':''}">${d[1]}</td>`).join('') + '</tr>';
-            html += '<tr style="height:8px"><td colspan="20"></td></tr>';
+            
+            // Верхняя строка
+            html += '<tr>';
+            for (let idx = 0; idx < chunk.length; idx++) {
+                let cellClass = `val-top ${(i + idx + 1) % 5 === 0 ? 'highlight-cell' : ''}`;
+                html += `<td class="${cellClass}">${chunk[idx][0]}</td>`;
+            }
+            html += '</tr>';
+
+            // Нижняя строка
+            html += '<tr>';
+            for (let idx = 0; idx < chunk.length; idx++) {
+                let cellClass = `val-bottom ${(i + idx + 1) % 5 === 0 ? 'highlight-cell' : ''}`;
+                html += `<td class="${cellClass}">${chunk[idx][1]}</td>`;
+            }
+            html += '</tr>';
+
+            html += '<tr style="height:15px"><td colspan="20"></td></tr>';
         }
         table.innerHTML = html;
     }
     generateTable();
 
-    function showProfitTable() {
-        document.getElementById('profit-table').style.display = 'block';
-        document.getElementById('table-toggle-btn').style.display = 'none';
-    }
+    function showProfitTable() { document.getElementById('profit-table').style.display = 'block'; document.getElementById('table-toggle-btn').style.display = 'none'; }
 
     function fillOptions() {
         const opt5 = document.getElementById('opt-5');
@@ -399,15 +488,9 @@
             div.innerHTML = `<span style="color:#888; margin-right:5px;">${count})</span> ${label}`;
             div.onclick = (e) => { e.stopPropagation(); lastStartIndex = i; lastRowIndex = -1; selectRange(i, endIdx, fullLabel, 'mode-5'); };
             opt5.appendChild(div);
-            
-            if (count % 4 === 0 && i + 5 < 85) {
-                let sep = document.createElement('div');
-                sep.className = 'mode-separator';
-                opt5.appendChild(sep);
-            }
+            if (count % 4 === 0 && i + 5 < 85) { let sep = document.createElement('div'); sep.className = 'mode-separator'; opt5.appendChild(sep); }
             count++;
         }
-        
         const optRow = document.getElementById('opt-row');
         const ranges = [[0,20], [20,40], [40,60], [60,85]];
         ranges.forEach((r, idx) => {
@@ -418,17 +501,13 @@
             div.onclick = (e) => { e.stopPropagation(); lastStartIndex = -1; lastRowIndex = idx; selectRange(r[0], r[1], label, 'mode-row'); };
             optRow.appendChild(div);
         });
-
         let blackLabel = "Սևեր";
         let blackDiv = document.createElement('div');
         blackDiv.style.padding = '8px'; blackDiv.style.cursor = 'pointer'; blackDiv.style.fontWeight = 'bold';
         blackDiv.innerHTML = `<span style="color:#888; margin-right:5px;">5)</span> ${blackLabel}`;
         blackDiv.onclick = (e) => { 
-            e.stopPropagation(); 
-            lastStartIndex = -1; 
-            lastRowIndex = 4;
-            const blackPool = data.filter((_, index) => (index + 1) % 5 === 0);
-            originalPool = blackPool;
+            e.stopPropagation(); lastStartIndex = -1; lastRowIndex = 4;
+            originalPool = data.filter((_, index) => (index + 1) % 5 === 0);
             currentModeLabel = blackLabel;
             document.querySelectorAll('.itc-select').forEach(el => el.classList.remove('selected-mode'));
             document.getElementById('mode-row').classList.add('selected-mode');
@@ -454,10 +533,67 @@
         document.querySelectorAll('.itc-select__dropdown').forEach(d => d.classList.add('hidden'));
     }
 
+    function openSettings() { document.getElementById('settings-window').style.display = 'block'; }
+    function closeSettings() { document.getElementById('settings-window').style.display = 'none'; }
+
+    function setTimerMode(enabled) {
+        useTimer = enabled;
+        document.getElementById('mode-with-timer').classList.toggle('active', enabled);
+        document.getElementById('mode-no-timer').classList.toggle('active', !enabled);
+        document.getElementById('timer-options').classList.toggle('hidden', !enabled);
+        if (!enabled) {
+            stopTimer();
+            document.getElementById('timer-display').classList.add('hidden');
+        }
+    }
+
+    function setTimerSeconds(s) {
+        timerLimit = s;
+        ['t-5', 't-7', 't-10'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+        });
+        const activeBtn = document.getElementById('t-' + s);
+        if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function startTimer() {
+        if (!useTimer) {
+            document.getElementById('timer-display').classList.add('hidden');
+            return;
+        }
+        clearInterval(timerInterval);
+        timeLeft = timerLimit;
+        const timerDisplay = document.getElementById('timer-display');
+        timerDisplay.classList.remove('hidden');
+        timerDisplay.innerText = timeLeft.toFixed(1);
+        
+        let lastInt = Math.ceil(timeLeft);
+        timerInterval = setInterval(() => {
+            timeLeft -= 0.1;
+            if (Math.ceil(timeLeft) < lastInt) {
+                playTickSound();
+                lastInt = Math.ceil(timeLeft);
+            }
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                clearInterval(timerInterval);
+                handleWrong();
+            }
+            timerDisplay.innerText = Math.max(0, timeLeft).toFixed(1);
+        }, 100);
+    }
+
+    function stopTimer() { clearInterval(timerInterval); }
+
     function goToSetup() {
+        stopTimer();
+        document.getElementById('timer-display').classList.add('hidden');
         document.getElementById('setup-screen').classList.remove('hidden');
+        document.getElementById('setup-title').classList.remove('hidden');
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('game-status').classList.add('hidden');
+        document.getElementById('round-stats').classList.add('hidden');
         document.getElementById('current-mode-display').classList.add('hidden');
         document.getElementById('back-to-setup').classList.add('hidden');
         document.getElementById('table-toggle-btn').style.display = 'inline-block';
@@ -468,18 +604,21 @@
         if (originalPool.length === 0) return alert("Խնդրում ենք ընտրել ռեժիմը!");
         document.getElementById('profit-table').style.display = 'none';
         document.getElementById('table-toggle-btn').style.display = 'none';
-        lives = 3;
-        comboCount = 0;
-        mistakes = [];
+        document.getElementById('setup-title').classList.add('hidden');
+        lives = 3; comboCount = 0; mistakes = [];
+        activePool = [...originalPool];
+        
+        stopTimer();
+        if(!useTimer) document.getElementById('timer-display').classList.add('hidden');
+        
         updateUI();
         document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('game-screen').style.display = 'flex';
         document.getElementById('game-status').classList.remove('hidden');
+        document.getElementById('round-stats').classList.remove('hidden');
         document.getElementById('back-to-setup').classList.remove('hidden');
-        const modeDisplay = document.getElementById('current-mode-display');
-        modeDisplay.innerText = currentModeLabel;
-        modeDisplay.classList.remove('hidden');
-        activePool = [...originalPool];
+        document.getElementById('current-mode-display').innerText = currentModeLabel;
+        document.getElementById('current-mode-display').classList.remove('hidden');
         document.getElementById('history-list').innerHTML = '';
         document.getElementById('progress-bar').style.width = '0%';
         document.getElementById('target-display').classList.remove('end-status');
@@ -491,12 +630,15 @@
     function updateUI() {
         document.getElementById('hearts-display').innerText = "❤️".repeat(lives);
         document.getElementById('count-display').innerText = `Խաղ: ${gamesPlayed}`;
-        
+        document.getElementById('round-counter-main').innerText = `${originalPool.length - activePool.length}/${originalPool.length}`;
         const comboEl = document.getElementById('combo-display');
-        if (comboCount >= 2) {
+        
+        const triggerCombos = [3, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80];
+        
+        if (triggerCombos.includes(comboCount)) {
             comboEl.innerText = `🔥 ${comboCount}`;
             comboEl.style.display = 'block';
-        } else {
+        } else if (comboCount === 0) {
             comboEl.style.display = 'none';
         }
     }
@@ -515,18 +657,18 @@
         display.dataset.answer = targetVal;
         const input = document.getElementById('user-input');
         input.value = ''; input.className = ''; input.focus();
+        updateUI();
+        startTimer();
     }
 
     function showBubbleFeedback() {
         const inputArea = document.getElementById('input-area');
         const rect = inputArea.getBoundingClientRect();
-        const posX = Math.random() > 0.5 ? rect.left : rect.right;
-        const posY = rect.top;
         const bubble = document.createElement('div');
         bubble.className = 'bubble-feedback';
         bubble.innerText = "+1";
-        bubble.style.left = posX + 'px';
-        bubble.style.top = posY + 'px';
+        bubble.style.left = (rect.left + rect.width/2) + 'px';
+        bubble.style.top = rect.top + 'px';
         document.body.appendChild(bubble);
         setTimeout(() => bubble.remove(), 2500);
         playPlopSound();
@@ -539,25 +681,39 @@
         const correctAnswer = String(display.dataset.answer);
         
         if (userAnswer === correctAnswer) {
+            stopTimer();
             input.classList.add('correct');
             comboCount++;
-            updateUI();
             showBubbleFeedback();
             addToHistory(display.innerText, correctAnswer);
             setTimeout(nextRound, 600);
         } else {
-            lives--;
-            comboCount = 0;
-            if (navigator.vibrate) navigator.vibrate(500);
-            mistakes.push(`${display.innerText} ➔ ${correctAnswer}`);
-            updateUI();
-            input.classList.add('wrong');
-            setTimeout(() => input.classList.remove('wrong'), 600);
-            if(lives <= 0) endGame(false);
+            handleWrong();
         }
     }
 
+    function handleWrong() {
+        stopTimer();
+        playErrorSound();
+        const input = document.getElementById('user-input');
+        const display = document.getElementById('target-display');
+        const correctAnswer = String(display.dataset.answer);
+        
+        lives--;
+        comboCount = 0;
+        if (navigator.vibrate) navigator.vibrate(500);
+        mistakes.push(`${display.innerText} ➔ ${correctAnswer}`);
+        updateUI();
+        input.classList.add('wrong');
+        setTimeout(() => {
+            input.classList.remove('wrong');
+            if(lives > 0) nextRound();
+            else endGame(false);
+        }, 600);
+    }
+
     function endGame(win) {
+        stopTimer();
         const display = document.getElementById('target-display');
         display.classList.add('end-status');
         display.innerText = win ? "ՀԱՂԹԱՆԱԿ" : "ՊԱՐՏՈՒԹՅՈՒՆ";
@@ -570,40 +726,33 @@
         }
         document.getElementById('input-area').classList.add('hidden');
         document.getElementById('end-buttons').classList.remove('hidden');
+        document.getElementById('timer-display').classList.add('hidden');
         document.getElementById('restart-btn').onclick = () => { gamesPlayed++; initGame(); };
         
         const nextBtn = document.getElementById('next-btn');
         nextBtn.classList.add('hidden');
-
         if (lastStartIndex !== -1 && lastStartIndex + 5 < 85) {
             nextBtn.classList.remove('hidden');
             nextBtn.onclick = () => {
                 lastStartIndex += 5;
                 let endIdx = Math.min(lastStartIndex + 5, 85);
-                let labelText = `${data[lastStartIndex][0]} - ${data[endIdx-1][0]}`;
-                let count = (lastStartIndex / 5) + 1;
-                selectRange(lastStartIndex, endIdx, `${count}) ${labelText}`, 'mode-5');
-                gamesPlayed++;
-                initGame();
+                selectRange(lastStartIndex, endIdx, `${(lastStartIndex/5)+1}) ${data[lastStartIndex][0]}-${data[endIdx-1][0]}`, 'mode-5');
+                gamesPlayed++; initGame();
             };
-        } 
-        else if (lastRowIndex !== -1 && lastRowIndex < 4) {
+        } else if (lastRowIndex !== -1 && lastRowIndex < 4) {
             nextBtn.classList.remove('hidden');
             nextBtn.onclick = () => {
                 lastRowIndex++;
                 if (lastRowIndex < 4) {
                     const ranges = [[0,20], [20,40], [40,60], [60,85]];
                     let r = ranges[lastRowIndex];
-                    let label = `Տող ${lastRowIndex+1} (${data[r[0]][0]}-${data[r[1]-1][0]})`;
-                    selectRange(r[0], r[1], label, 'mode-row');
-                } else if (lastRowIndex === 4) {
-                    const blackPool = data.filter((_, index) => (index + 1) % 5 === 0);
-                    originalPool = blackPool;
+                    selectRange(r[0], r[1], `Տող ${lastRowIndex+1} (${data[r[0]][0]}-${data[r[1]-1][0]})`, 'mode-row');
+                } else {
+                    originalPool = data.filter((_, index) => (index + 1) % 5 === 0);
                     currentModeLabel = "Սևեր";
-                    document.getElementById('label-row').innerText = currentModeLabel;
+                    document.getElementById('label-row').innerText = "Սևեր";
                 }
-                gamesPlayed++;
-                initGame();
+                gamesPlayed++; initGame();
             };
         }
         if(win) startAutoFireworks();
@@ -612,36 +761,27 @@
     function addToHistory(q, a) {
         const list = document.getElementById('history-list');
         const div = document.createElement('div');
-        div.className = 'history-item';
-        div.innerText = `${q} → ${a}`;
+        div.className = 'history-item'; div.innerText = `${q} → ${a}`;
         list.prepend(div);
     }
-
     document.getElementById('user-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
-
+    
     const canvas = document.getElementById("magicCanvas");
     const ctx = canvas.getContext("2d");
     let particles = [];
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener("resize", resize); resize();
-    
     class Particle {
         constructor(x, y, color) {
             this.x = x; this.y = y; 
             const angle = Math.random() * Math.PI * 2;
             const force = Math.random() * 6 + 1;
-            this.vx = Math.cos(angle) * force; 
-            this.vy = Math.sin(angle) * force; 
-            this.life = 100;
-            this.color = color || `rgba(255,214,10,`;
+            this.vx = Math.cos(angle) * force; this.vy = Math.sin(angle) * force; 
+            this.life = 100; this.color = color || `rgba(255,214,10,`;
         }
         update() { this.x += this.vx; this.y += this.vy; this.vy += 0.05; this.life -= 1.5; }
-        draw() { 
-            ctx.fillStyle = `${this.color}${this.life/100})`; 
-            ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fill(); 
-        }
+        draw() { ctx.fillStyle = `${this.color}${this.life/100})`; ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fill(); }
     }
-
     function animate() {
         ctx.clearRect(0,0,canvas.width,canvas.height);
         particles = particles.filter(p => p.life > 0);
@@ -649,13 +789,11 @@
         requestAnimationFrame(animate);
     }
     animate();
-
     function createFirework(x, y) {
         const colors = ['rgba(255,214,10,', 'rgba(0,122,255,', 'rgba(52,199,89,', 'rgba(255,59,48,', 'rgba(175,82,222,'];
         const color = colors[Math.floor(Math.random() * colors.length)];
         for(let i=0; i<60; i++) particles.push(new Particle(x, y, color));
     }
-
     function startAutoFireworks() {
         let startTime = Date.now();
         const interval = setInterval(() => {
@@ -666,8 +804,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
